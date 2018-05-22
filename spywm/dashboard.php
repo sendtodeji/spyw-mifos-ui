@@ -17,6 +17,7 @@ $customer_id = $_SESSION['customer_id'];
 $dg = new C_DataGrid("$sql", "account_id", "v_savings_stmt");
 $dg->set_query_filter("customer_id = $customer_id and prd_offering_id=4");
 $dg->set_col_hidden("account_id, customer_id");
+$dg->set_sortname('txndate','DESC');
 //$dg->enable_search(true);
 //$dg->set_dimension(50, 300);
 //$dg->set_jq_gridName('MonthlySavings');
@@ -30,6 +31,8 @@ $grid = $dg->get_display(FALSE);
 $scdg = new C_DataGrid("$sql", "account_id", "v_savings_stmt");
 $scdg->set_query_filter("customer_id = $customer_id and prd_offering_id=5");
 $scdg->set_col_hidden("account_id, customer_id");
+$scdg->set_sortname('txndate','DESC');
+
 //$scdg->enable_search(true);
 $scdg->set_dimension(100, 300);
 $scdg->enable_resize(true);
