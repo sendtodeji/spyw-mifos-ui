@@ -28,17 +28,15 @@ function getBalance($prd_offering_id) {
 }
 */
 
-function getBalance($savings_type) {
+function getBalance($prd_offering_id) {
     global $conn;
     $customer_id = $_SESSION['customer_id'];
-    
-    //$records = $conn->prepare('SELECT  FROM savings_report WHERE customer_id = :cust_id and prd_offering_id = :p_id');
-    $records = $conn->prepare('select '.$savings_type.'  FROM savings_report WHERE customer_id = :cust_id' );
+    $records = $conn->prepare('select max(balance) balance from v_savings_summary where created_date = (select max(created_date) from v_savings_summary where customer_id = :cust_id and prd_offering_id = :p_id)');
     $records->bindParam(':cust_id', $customer_id);
-    //$records->bindParam(':p_id', $prd_offering_id);
+    $records->bindParam(':p_id', $prd_offering_id);
     $records->execute();
     $results = $records->fetch(PDO::FETCH_ASSOC);
 
-    return $results[$savings_type];
+    return $results['balance'];
 }
 

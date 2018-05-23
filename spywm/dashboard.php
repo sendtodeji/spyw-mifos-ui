@@ -11,30 +11,32 @@ if (!isLoggedIn()) {
 
 
 //$sql = sprintf('select txndate, receiptdate, txntype, debit, credit, account_id, customer_id from v_savings_stmt');
-$sql = sprintf('select txndate, txntype, debit withdrawals, credit deposits, account_id, customer_id from v_savings_stmt');
+//$sql = sprintf('select txndate, txntype, debit withdrawals, credit deposits, account_id, customer_id from v_savings_stmt');
+$sql = sprintf('select account_trxn_id,created_date "Posting Date", if(deposit_amount=0, format(-amount,2), format(amount,2)) Amount, format(balance,2) as "Available Balance" from v_savings_summary');
 $customer_id = $_SESSION['customer_id'];
 //echo $customer_id;
-$dg = new C_DataGrid("$sql", "account_id", "v_savings_stmt");
+$dg = new C_DataGrid("$sql", "account_trxn_id", "v_savings_summary");
 $dg->set_query_filter("customer_id = $customer_id and prd_offering_id=4");
-$dg->set_col_hidden("account_id, customer_id");
-$dg->set_sortname('txndate','DESC');
-//$dg->enable_search(true);
-//$dg->set_dimension(50, 300);
-//$dg->set_jq_gridName('MonthlySavings');
+$dg->set_col_hidden("account_trxn_id");
+$dg->set_sortname('created_date','DESC');
+$dg->set_col_align('Amount','right');
+$dg->set_col_align('Available Balance','right');
 //$dg->set_theme('cobalt_flat');
 $dg->set_caption('Monthly Savings Account Details');
 $dg->display(false);
 $grid = $dg->get_display(FALSE);
-//$dg->display_script_includeonce();
+$dg->display_script_includeonce();
 
 
-$scdg = new C_DataGrid("$sql", "account_id", "v_savings_stmt");
+$scdg = new C_DataGrid("$sql", "account_trxn_id", "v_savings_summary");
 $scdg->set_query_filter("customer_id = $customer_id and prd_offering_id=5");
-$scdg->set_col_hidden("account_id, customer_id");
-$scdg->set_sortname('txndate','DESC');
+$scdg->set_col_hidden("account_trxn_id");
+$scdg->set_sortname('created_date','DESC');
+$scdg->set_col_align('Amount','right');
+$scdg->set_col_align('Available Balance','right');
 
 //$scdg->enable_search(true);
-$scdg->set_dimension(100, 300);
+//$scdg->set_dimension(100, 500);
 $scdg->enable_resize(true);
 $scdg->set_jq_gridName('ShareCapital');
 $scdg->set_caption('Share Capital Savings Account Details');
@@ -117,18 +119,17 @@ $scdg->display_script_includeonce();
                             </ul>
                             <div class = "tab-content">
                                 <div class = "active tab-pane" id = "activity">
-                                    <!--Post -->
                                     <?php
-                                    echo "<strong> Account Balance: N </strong>" . number_format(getBalance('thrift_savings'), 2);
+					echo "<strong> Summary </strong><br/>" ;
+                                    echo "<strong> Account Balance: N </strong>" . number_format(getBalance(4), 2);
                                     echo $grid;
                                     ?>
 
-                                    <!-- /.post -->
                                 </div>
-                                <!-- /.tab-pane -->
-                                <div class="tab-pane" id="timeline">
+                                <div class="tab-pane" id = "timeline">
                                     <?php
-                                    echo "<strong> Account Balance: N </strong>" . number_format(getBalance('share_capital'), 2);
+					 echo "<strong> Summary </strong><br/>" ;
+                                    echo "<strong> Account Balance: N </strong>" . number_format(getBalance(5), 2);
                                     echo $scGrid;
                                     ?>
 
